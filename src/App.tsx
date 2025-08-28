@@ -4,8 +4,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
-import CreateInvoice from "./pages/CreateInvoice";
+import Invoices from "./pages/Invoices";
+import NewInvoice from "./pages/NewInvoice";
 import PaymentPage from "./pages/PaymentPage";
 import InvoiceDetail from "./pages/InvoiceDetail";
 import Settings from "./pages/Settings";
@@ -21,8 +21,8 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Login />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/create-invoice" element={<CreateInvoice />} />
+          <Route path="/invoices" element={<Invoices />} />
+          <Route path="/new-invoice" element={<NewInvoice />} />
           <Route path="/pay/:invoiceId" element={<PaymentPage />} />
           <Route path="/invoice/:invoiceId" element={<InvoiceDetail />} />
           <Route path="/settings" element={<Settings />} />

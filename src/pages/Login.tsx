@@ -10,7 +10,7 @@ const Login = () => {
   const navigate = useNavigate();
 
   const handleLogin = () => {
-    navigate('/dashboard');
+    navigate('/invoices');
   };
 
   return (
@@ -21,10 +21,10 @@ const Login = () => {
           <PayoLogo size="lg" />
           <div className="space-y-2">
             <h1 className="text-3xl font-bold text-foreground">
-              Cobra cripto sin complicaciones
+              Gateway de pagos cripto
             </h1>
             <p className="text-muted-foreground text-lg">
-              BTC Lightning, on-chain y USDC con la simplicidad de un QR
+              Acepta BTC Lightning, on-chain y USDC con webhooks automáticos
             </p>
           </div>
         </div>
@@ -90,8 +90,8 @@ const Login = () => {
                 <Zap className="w-5 h-5 text-primary-foreground" />
               </div>
               <div>
-                <p className="font-medium">Lightning rápido</p>
-                <p className="text-sm text-muted-foreground">Pagos instantáneos</p>
+                <p className="font-medium">Pagos instantáneos</p>
+                <p className="text-sm text-muted-foreground">Lightning Network para transacciones rápidas</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -99,8 +99,8 @@ const Login = () => {
                 <Wallet className="w-5 h-5 text-secondary-foreground" />
               </div>
               <div>
-                <p className="font-medium">Sin custodiar</p>
-                <p className="text-sm text-muted-foreground">Tus fondos, tu control</p>
+                <p className="font-medium">Webhooks automáticos</p>
+                <p className="text-sm text-muted-foreground">Notificaciones instantáneas de pagos</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -108,8 +108,8 @@ const Login = () => {
                 <CreditCard className="w-5 h-5 text-primary-foreground" />
               </div>
               <div>
-                <p className="font-medium">Multi-red</p>
-                <p className="text-sm text-muted-foreground">BTC + USDC Base</p>
+                <p className="font-medium">Multi-método</p>
+                <p className="text-sm text-muted-foreground">BTC Lightning, on-chain y USDC Base</p>
               </div>
             </div>
           </div>
@@ -119,7 +119,7 @@ const Login = () => {
         <div className="text-center">
           <div className="inline-flex items-center gap-2 bg-gradient-primary px-4 py-2 rounded-full">
             <span className="w-2 h-2 bg-primary-foreground rounded-full animate-pulse"></span>
-            <span className="text-primary-foreground font-medium">Beta: 0% comisión</span>
+            <span className="text-primary-foreground font-medium">Beta: Gateway de pagos cripto</span>
           </div>
         </div>
       </div>

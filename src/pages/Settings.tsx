@@ -2,31 +2,33 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { PayoLogo } from '@/components/PayoLogo';
+import BottomNav from '@/components/BottomNav';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Save, TestTube, Wallet, Zap, Bitcoin, DollarSign, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, Save, TestTube, Wallet, Zap, Bitcoin, DollarSign, AlertTriangle, Settings as SettingsIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { PAYMENT_RULES } from '@/domain/rules';
 
 const Settings = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  
+
   const [settings, setSettings] = useState({
     // Wallet addresses
-    btcXpub: 'xpub6D4BDPcP2GT577Vvch3R8wDkScZWzQzMMUm3PWbmWvVJrZwQY4VUNgqFJPMM3No2dFDFGTsxxpG5uJh7n7epu4trkrX7x7DogT5Uv6fcLQ5',
-    lnNode: 'node1234@lightning.example.com:9735',
-    usdcAddress: '0x742d35Cc6635C0532925a3b8D2F3ED3e9',
-    
+    btcAddress: '',
+    btcXpub: '',
+    lnEndpoint: '',
+    evmAddress: '',
+
     // Webhook configuration
-    webhookUrl: 'https://mystore.com/webhook/payo',
-    webhookSecret: 'whsec_1234567890abcdef',
-    
+    webhookUrl: '',
+    webhookSecret: '',
+
     // Preferences
-    defaultExpiry: '15',
-    confirmationsRequired: '1',
-    amountTolerance: '1'
+    defaultExpiryMin: 15,
+    confTarget: 1,
+    tolerancePct: 1
   });
 
   const handleSave = () => {
@@ -53,7 +55,7 @@ const Settings = () => {
           <Button 
             variant="outline" 
             size="icon"
-            onClick={() => navigate('/dashboard')}
+            onClick={() => navigate('/invoices')}
             className="glass-subtle border-glass-border"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -77,7 +79,20 @@ const Settings = () => {
             <div className="space-y-2">
               <label className="text-sm font-medium flex items-center gap-2">
                 <Bitcoin className="w-4 h-4" />
-                Bitcoin xPub (opcional)
+                Dirección BTC on-chain
+              </label>
+              <Input
+                value={settings.btcAddress}
+                onChange={(e) => setSettings({ ...settings, btcAddress: e.target.value })}
+                placeholder="bc1q..."
+                className="glass-subtle border-glass-border font-mono text-xs"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium flex items-center gap-2">
+                <Bitcoin className="w-4 h-4" />
+                BTC xPub (opcional)
               </label>
               <Input
                 value={settings.btcXpub}
@@ -93,11 +108,11 @@ const Settings = () => {
             <div className="space-y-2">
               <label className="text-sm font-medium flex items-center gap-2">
                 <Zap className="w-4 h-4" />
-                Nodo Lightning
+                LN Endpoint
               </label>
               <Input
-                value={settings.lnNode}
-                onChange={(e) => setSettings({ ...settings, lnNode: e.target.value })}
+                value={settings.lnEndpoint}
+                onChange={(e) => setSettings({ ...settings, lnEndpoint: e.target.value })}
                 placeholder="node1234@lightning.example.com:9735"
                 className="glass-subtle border-glass-border font-mono text-xs"
               />
@@ -109,8 +124,8 @@ const Settings = () => {
                 Dirección USDC (Base)
               </label>
               <Input
-                value={settings.usdcAddress}
-                onChange={(e) => setSettings({ ...settings, usdcAddress: e.target.value })}
+                value={settings.evmAddress}
+                onChange={(e) => setSettings({ ...settings, evmAddress: e.target.value })}
                 placeholder="0x742d35Cc6635C0532925a3b8D2F3ED3e9"
                 className="glass-subtle border-glass-border font-mono text-xs"
               />
@@ -173,53 +188,57 @@ const Settings = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium">Expiración por defecto</label>
-                <Select 
-                  value={settings.defaultExpiry} 
-                  onValueChange={(value) => setSettings({ ...settings, defaultExpiry: value })}
+                <Select
+                  value={settings.defaultExpiryMin.toString()}
+                  onValueChange={(value) => setSettings({ ...settings, defaultExpiryMin: parseInt(value) })}
                 >
                   <SelectTrigger className="glass-subtle border-glass-border">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="glass border-glass-border">
-                    <SelectItem value="15">15 minutos</SelectItem>
-                    <SelectItem value="30">30 minutos</SelectItem>
-                    <SelectItem value="60">1 hora</SelectItem>
-                    <SelectItem value="1440">24 horas</SelectItem>
+                    {PAYMENT_RULES.EXPIRATION_OPTIONS.map((minutes) => (
+                      <SelectItem key={minutes} value={minutes.toString()}>
+                        {minutes < 60 ? `${minutes} minutos` : `${minutes / 60} hora${minutes > 60 ? 's' : ''}`}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2">
                 <label className="text-sm font-medium">Confirmaciones requeridas</label>
-                <Select 
-                  value={settings.confirmationsRequired} 
-                  onValueChange={(value) => setSettings({ ...settings, confirmationsRequired: value })}
+                <Select
+                  value={settings.confTarget.toString()}
+                  onValueChange={(value) => setSettings({ ...settings, confTarget: parseInt(value) })}
                 >
                   <SelectTrigger className="glass-subtle border-glass-border">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="glass border-glass-border">
-                    <SelectItem value="1">1 confirmación</SelectItem>
-                    <SelectItem value="3">3 confirmaciones</SelectItem>
-                    <SelectItem value="6">6 confirmaciones</SelectItem>
+                    {PAYMENT_RULES.CONFIRMATION_OPTIONS.map((conf) => (
+                      <SelectItem key={conf} value={conf.toString()}>
+                        {conf} confirmación{conf > 1 ? 'es' : ''}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2">
                 <label className="text-sm font-medium">Tolerancia de monto (%)</label>
-                <Select 
-                  value={settings.amountTolerance} 
-                  onValueChange={(value) => setSettings({ ...settings, amountTolerance: value })}
+                <Select
+                  value={settings.tolerancePct.toString()}
+                  onValueChange={(value) => setSettings({ ...settings, tolerancePct: parseInt(value) })}
                 >
                   <SelectTrigger className="glass-subtle border-glass-border">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="glass border-glass-border">
-                    <SelectItem value="0">Exacto (0%)</SelectItem>
-                    <SelectItem value="1">±1%</SelectItem>
-                    <SelectItem value="2">±2%</SelectItem>
-                    <SelectItem value="5">±5%</SelectItem>
+                    {PAYMENT_RULES.TOLERANCE_OPTIONS.map((pct) => (
+                      <SelectItem key={pct} value={pct.toString()}>
+                        {pct === 0 ? 'Exacto' : `±${pct}%`}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -286,16 +305,19 @@ const Settings = () => {
         </Card>
 
         {/* Save Button */}
-        <div className="flex justify-end">
-          <Button 
+        <div className="flex justify-end pb-20">
+          <Button
             onClick={handleSave}
-            variant="default"
-            className="bg-gradient-primary text-primary-foreground shadow-lg hover:shadow-glow-primary transition-glow font-semibold"
+            variant="payo"
+            className="shadow-lg hover:shadow-glow-primary transition-glow font-semibold"
           >
             <Save className="w-4 h-4 mr-2" />
             Guardar configuración
           </Button>
         </div>
+
+        {/* Bottom Navigation */}
+        <BottomNav />
       </div>
     </div>
   );
