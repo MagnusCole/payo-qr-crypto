@@ -1,38 +1,90 @@
-import React, { useEffect } from 'react';
+import React from 'react';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { PayoLogo } from '@/components/PayoLogo';
 import { useNavigate } from 'react-router-dom';
-import { Settings } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import BottomNav from '@/components/BottomNav';
-import FabAdd from '@/components/FabAdd';
-import { useFinance } from '@/store/useFinance';
-import { ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { Plus, Settings, Download, Zap, Bitcoin, DollarSign, Clock, CheckCircle, XCircle } from 'lucide-react';
 
-export default function Dashboard(){
-  const { txs, load } = useFinance();
-  useEffect(()=>{ load(); },[load]);
+const Dashboard = () => {
   const navigate = useNavigate();
 
-  // Calcular estadísticas
-  const totalIncome = txs.filter(t => t.type === 'ingreso').reduce((a,b) => a + b.amount, 0);
-  const totalExpenses = txs.filter(t => t.type === 'gasto').reduce((a,b) => a + b.amount, 0);
-  const balance = totalIncome - totalExpenses;
+  const mockInvoices = [
+    {
+      id: '1',
+      amount: 150,
+      currency: 'PEN',
+      cryptoAmount: '0.00234',
+      cryptoCurrency: 'BTC',
+      status: 'paid',
+      description: 'Consultoría web',
+      createdAt: new Date('2024-01-15T10:30:00'),
+      method: 'lightning'
+    },
+    {
+      id: '2',
+      amount: 75,
+      currency: 'PEN',
+      cryptoAmount: '25.5',
+      cryptoCurrency: 'USDC',
+      status: 'pending',
+      description: 'Diseño logo',
+      createdAt: new Date('2024-01-15T14:20:00'),
+      method: 'usdc'
+    },
+    {
+      id: '3',
+      amount: 300,
+      currency: 'PEN',
+      cryptoAmount: '0.00712',
+      cryptoCurrency: 'BTC',
+      status: 'expired',
+      description: 'Desarrollo app',
+      createdAt: new Date('2024-01-14T16:45:00'),
+      method: 'bitcoin'
+    }
+  ];
 
-  // Datos para el gráfico de categorías
-  const categoryData = txs
-    .filter(t => t.type === 'gasto')
-    .reduce((acc, tx) => {
-      const existing = acc.find(item => item.name === tx.category);
-      if (existing) {
-        existing.value += tx.amount;
-      } else {
-        acc.push({ name: tx.category, value: tx.amount });
-      }
-      return acc;
-    }, [] as { name: string; value: number }[]);
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'paid':
+        return <CheckCircle className="w-4 h-4" />;
+      case 'pending':
+        return <Clock className="w-4 h-4" />;
+      case 'expired':
+        return <XCircle className="w-4 h-4" />;
+      default:
+        return <Clock className="w-4 h-4" />;
+    }
+  };
 
-  const COLORS = ['hsl(var(--primary))', 'hsl(var(--secondary))', '#8884d8', '#82ca9d'];
+  const getStatusVariant = (status: string) => {
+    switch (status) {
+      case 'paid':
+        return 'success';
+      case 'pending':
+        return 'warning';
+      case 'expired':
+        return 'danger';
+      default:
+        return 'secondary';
+    }
+  };
+
+  const getMethodIcon = (method: string) => {
+    switch (method) {
+      case 'lightning':
+        return <Zap className="w-4 h-4" />;
+      case 'bitcoin':
+        return <Bitcoin className="w-4 h-4" />;
+      case 'usdc':
+        return <DollarSign className="w-4 h-4" />;
+      default:
+        return <Bitcoin className="w-4 h-4" />;
+    }
+  };
+
+  const latestInvoice = mockInvoices[0];
 
   return (
     <div className="min-h-screen p-4">
@@ -41,8 +93,8 @@ export default function Dashboard(){
         <div className="flex items-center justify-between">
           <PayoLogo size="md" />
           <div className="flex items-center gap-3">
-            <Button
-              variant="glass"
+            <Button 
+              variant="glass" 
               size="icon"
               onClick={() => navigate('/settings')}
             >
@@ -51,125 +103,165 @@ export default function Dashboard(){
           </div>
         </div>
 
-        {/* Balance Cards */}
+        {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card className="glass shadow-glow-subtle">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
-                Balance Total
+                Pagos del mes
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">S/. {balance.toFixed(2)}</div>
-              <p className="text-xs text-muted-foreground">Ingresos - Gastos</p>
+              <div className="text-2xl font-bold">12</div>
+              <p className="text-xs text-muted-foreground">+20% vs mes anterior</p>
             </CardContent>
           </Card>
 
           <Card className="glass shadow-glow-subtle">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
-                Ingresos
+                Total recaudado
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-success">S/. {totalIncome.toFixed(2)}</div>
-              <p className="text-xs text-muted-foreground">Total recibido</p>
+              <div className="text-2xl font-bold">S/. 2,340</div>
+              <p className="text-xs text-muted-foreground">En cripto este mes</p>
             </CardContent>
           </Card>
 
           <Card className="glass shadow-glow-subtle">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
-                Gastos
+                Tasa de éxito
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-danger">S/. {totalExpenses.toFixed(2)}</div>
-              <p className="text-xs text-muted-foreground">Total gastado</p>
+              <div className="text-2xl font-bold">94%</div>
+              <p className="text-xs text-muted-foreground">Facturas pagadas</p>
             </CardContent>
           </Card>
         </div>
 
-        {/* Category Pie Chart */}
-        {categoryData.length > 0 && (
-          <Card className="glass shadow-glow-subtle">
-            <CardHeader>
-              <CardTitle>Gastos por Categoría</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={categoryData}
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={80}
-                      fill="#8884d8"
-                      dataKey="value"
-                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                    >
-                      {categoryData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Recent Transactions */}
+        {/* Latest Invoice */}
         <Card className="glass shadow-glow-subtle">
           <CardHeader>
-            <CardTitle>Transacciones Recientes</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              Último cobro
+              <Badge 
+                variant={getStatusVariant(latestInvoice.status) as any}
+                className="flex items-center gap-1"
+              >
+                {getStatusIcon(latestInvoice.status)}
+                {latestInvoice.status === 'paid' ? 'Pagado' : 
+                 latestInvoice.status === 'pending' ? 'Pendiente' : 'Expirado'}
+              </Badge>
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {txs.slice(0, 5).map((tx) => (
-                <div
-                  key={tx.id}
-                  className="flex items-center justify-between p-4 glass-subtle rounded-lg"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                      tx.type === 'ingreso' ? 'bg-success/20' : 'bg-danger/20'
-                    }`}>
-                      <span className={`text-sm font-bold ${
-                        tx.type === 'ingreso' ? 'text-success' : 'text-danger'
-                      }`}>
-                        {tx.type === 'ingreso' ? '+' : '-'}
-                      </span>
-                    </div>
-                    <div>
-                      <p className="font-medium capitalize">{tx.category}</p>
-                      {tx.note && <p className="text-sm text-muted-foreground">{tx.note}</p>}
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className={`font-bold ${tx.type === 'ingreso' ? 'text-success' : 'text-danger'}`}>
-                      {tx.type === 'ingreso' ? '+' : '-'}S/. {tx.amount.toFixed(2)}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {new Date(tx.date).toLocaleDateString()}
-                    </p>
-                  </div>
-                </div>
-              ))}
-              {txs.length === 0 && (
-                <div className="text-center py-8">
-                  <p className="text-muted-foreground">No hay transacciones aún</p>
-                  <p className="text-sm text-muted-foreground">¡Agrega tu primera transacción!</p>
-                </div>
-              )}
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <p className="text-2xl font-bold">
+                  S/. {latestInvoice.amount}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  {latestInvoice.cryptoAmount} {latestInvoice.cryptoCurrency}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  {latestInvoice.description}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                {getMethodIcon(latestInvoice.method)}
+                <span className="text-sm capitalize">{latestInvoice.method}</span>
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        <FabAdd />
-        <BottomNav />
+        {/* Invoices List */}
+        <Card className="glass shadow-glow-subtle">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle>Facturas recientes</CardTitle>
+              <Button variant="glass" size="sm">
+                <Download className="w-4 h-4 mr-2" />
+                Exportar CSV
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {mockInvoices.map((invoice) => (
+                <div 
+                  key={invoice.id}
+                  className="flex items-center justify-between p-4 glass-subtle rounded-lg hover:shadow-glow-subtle transition-glow cursor-pointer"
+                  onClick={() => navigate(`/invoice/${invoice.id}`)}
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2">
+                      {getMethodIcon(invoice.method)}
+                      <Badge 
+                        variant={getStatusVariant(invoice.status) as any}
+                        className="flex items-center gap-1"
+                      >
+                        {getStatusIcon(invoice.status)}
+                        {invoice.status === 'paid' ? 'Pagado' : 
+                         invoice.status === 'pending' ? 'Pendiente' : 'Expirado'}
+                      </Badge>
+                    </div>
+                    <div>
+                      <p className="font-medium">S/. {invoice.amount}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {invoice.description}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-medium">
+                      {invoice.cryptoAmount} {invoice.cryptoCurrency}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {invoice.createdAt.toLocaleDateString()}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Beta Banner */}
+        <Card className="glass shadow-glow-subtle border-primary/20">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <h3 className="font-semibold">Payo Beta: 0% comisión</h3>
+                <p className="text-sm text-muted-foreground">
+                  Conecta tu e-commerce y automatiza los pagos
+                </p>
+              </div>
+              <Button variant="payo">
+                Configurar webhooks
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Floating Action Button */}
+        <div className="fixed bottom-6 right-6">
+          <Button 
+            variant="payo"
+            size="xl"
+            className="rounded-full shadow-glow-primary"
+            onClick={() => navigate('/create-invoice')}
+          >
+            <Plus className="w-6 h-6 mr-2" />
+            Nuevo Cobro
+          </Button>
+        </div>
       </div>
     </div>
   );
-}
+};
+
+export default Dashboard;

@@ -10,9 +10,6 @@ import PaymentPage from "./pages/PaymentPage";
 import InvoiceDetail from "./pages/InvoiceDetail";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
-import AddTx from "./pages/AddTx";
-import Suggestions from "./pages/Suggestions";
-import Currency from "./pages/Currency";
 
 const queryClient = new QueryClient();
 
@@ -29,9 +26,6 @@ const App = () => (
           <Route path="/pay/:invoiceId" element={<PaymentPage />} />
           <Route path="/invoice/:invoiceId" element={<InvoiceDetail />} />
           <Route path="/settings" element={<Settings />} />
-          <Route path="/add" element={<AddTx />} />
-          <Route path="/suggestions" element={<Suggestions />} />
-          <Route path="/currency" element={<Currency />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
