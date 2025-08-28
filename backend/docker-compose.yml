@@ -1,0 +1,33 @@
+# Payo Backend - Docker Compose
+
+version: '3.8'
+
+services:
+  payo-backend:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://payo_user:payo_password@postgres:5432/payo_db
+      - DEBUG=true
+    depends_on:
+      - postgres
+    volumes:
+      - ./logs:/app/logs
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:15
+    environment:
+      - POSTGRES_DB=payo_db
+      - POSTGRES_USER=payo_user
+      - POSTGRES_PASSWORD=payo_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
