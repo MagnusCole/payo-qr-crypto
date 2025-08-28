@@ -1,0 +1,148 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Payo Design System - Modern Crypto Payment Platform */
+
+@layer base {
+  :root {
+    /* Aurora background gradient */
+    --background: 230 25% 5%;
+    --foreground: 0 0% 98%;
+
+    /* Glassmorphism cards */
+    --card: 230 20% 8%;
+    --card-foreground: 0 0% 95%;
+    --glass: 230 15% 12%;
+    --glass-border: 230 20% 20%;
+
+    /* Popover surfaces */
+    --popover: 230 20% 8%;
+    --popover-foreground: 0 0% 95%;
+
+    /* Payo brand colors - lime to emerald gradient */
+    --primary: 142 76% 36%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 142 76% 55%;
+    
+    /* Cyan to blue technology gradient */
+    --secondary: 200 98% 39%;
+    --secondary-foreground: 0 0% 100%;
+    --secondary-glow: 200 98% 55%;
+
+    /* Status colors */
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 100%;
+    --warning: 45 93% 47%;
+    --warning-foreground: 0 0% 100%;
+    --danger: 0 84% 60%;
+    --danger-foreground: 0 0% 100%;
+
+    /* Neutral tones */
+    --muted: 230 15% 15%;
+    --muted-foreground: 230 10% 65%;
+
+    --accent: 230 15% 15%;
+    --accent-foreground: 0 0% 95%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Interactive elements */
+    --border: 230 20% 20%;
+    --input: 230 20% 12%;
+    --ring: 142 76% 55%;
+
+    --radius: 1rem;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    --gradient-secondary: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--secondary-glow)));
+    --gradient-aurora: linear-gradient(135deg, hsl(230 25% 5%) 0%, hsl(240 30% 8%) 50%, hsl(250 35% 6%) 100%);
+    --gradient-glass: linear-gradient(145deg, hsla(230, 20%, 15%, 0.8), hsla(230, 15%, 10%, 0.6));
+
+    /* Neon glow effects */
+    --glow-primary: 0 0 20px hsl(var(--primary-glow) / 0.5);
+    --glow-secondary: 0 0 20px hsl(var(--secondary-glow) / 0.5);
+    --glow-subtle: 0 0 40px hsl(var(--primary-glow) / 0.1);
+
+    /* Smooth transitions */
+    --transition-all: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-glow: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    background: var(--gradient-aurora);
+    min-height: 100vh;
+  }
+
+  /* Glassmorphism utility classes */
+  .glass {
+    background: var(--gradient-glass);
+    backdrop-filter: blur(12px);
+    border: 1px solid hsl(var(--glass-border));
+  }
+
+  .glass-subtle {
+    background: hsla(230, 15%, 12%, 0.4);
+    backdrop-filter: blur(8px);
+    border: 1px solid hsl(var(--glass-border) / 0.3);
+  }
+
+  /* Neon glow effects */
+  .glow-primary {
+    box-shadow: var(--glow-primary);
+  }
+
+  .glow-secondary {
+    box-shadow: var(--glow-secondary);
+  }
+
+  .glow-subtle {
+    box-shadow: var(--glow-subtle);
+  }
+
+  /* Smooth transitions */
+  .transition-glow {
+    transition: var(--transition-glow);
+  }
+
+  .transition-all-smooth {
+    transition: var(--transition-all);
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--primary));
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary-glow));
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
