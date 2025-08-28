@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker
 from typing import AsyncGenerator
 from .models import Base
 
-DATABASE_URL = "postgresql+asyncpg://payo:payo@localhost/payo_db"
+DATABASE_URL = "sqlite+aiosqlite:///./payo.db"
 
 engine = create_async_engine(DATABASE_URL, echo=True)
 AsyncSessionLocal = sessionmaker(engine, class_=AsyncSession)

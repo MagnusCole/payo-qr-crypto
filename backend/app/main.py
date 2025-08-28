@@ -4,9 +4,12 @@ from .routers import invoices, webhooks
 from .database import engine, Base
 from .listeners import start_listeners
 from .services.exchange_rate import ExchangeRateService
+import asyncio
 
-# Create database tables
-Base.metadata.create_all(bind=engine)
+async def create_tables():
+    """Create database tables asynchronously"""
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
 
 app = FastAPI(
     title="Payo Crypto Payment Gateway",
@@ -17,7 +20,7 @@ app = FastAPI(
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:3000"],  # Vite dev server
+    allow_origins=["http://localhost:5173", "http://localhost:3000", "http://localhost:8080"],  # Vite dev server
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -29,7 +32,8 @@ app.include_router(webhooks.router, prefix="/api", tags=["webhooks"])
 
 @app.on_event("startup")
 async def startup_event():
-    """Start blockchain listeners on app startup"""
+    """Initialize database and start blockchain listeners on app startup"""
+    await create_tables()
     await start_listeners()
 
 @app.get("/")
